@@ -1,0 +1,5 @@
+[B]Version 0.0.2[/B]
+  - Support for French contents.
+  
+[B]Version 0.0.1[/B]
+  - initial version
