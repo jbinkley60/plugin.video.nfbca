@@ -1,6 +1,7 @@
-import urllib, urllib2, re, sys, cookielib, os
+import urllib.request, urllib.error, urllib.parse, re, sys, http.cookiejar, os
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
-import simplejson as json
+#import simplejson as json
+import json
 from xbmcgui import ListItem
 
 # plugin constants
@@ -56,9 +57,9 @@ class MediaItem:
         
 ## Get URL
 def getURL( url ):
-    print plugin + ' getURL :: url = ' + url
-    cj = cookielib.LWPCookieJar()
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+    #print plugin + ' getURL :: url = ' + url
+    cj = http.cookiejar.LWPCookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
     opener.addheaders = [('User-Agent', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;)')]
     usock=opener.open(url)
     response=usock.read()
@@ -123,8 +124,9 @@ def BuildMainDirectory():
         Mode = mode
         Title = name
         Thumb = thumbnailImage
-        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
-        Mediaitem.ListItem.setThumbnailImage(Thumb)
+        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
+        #Mediaitem.ListItem.setThumbnailImage(Thumb)
+        Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
         Mediaitem.ListItem.setLabel(Title)
         Mediaitem.Isfolder = True
         MediaItems.append(Mediaitem)
@@ -158,7 +160,7 @@ def Featured(lang):
         #print Url
         Title = Title.encode('utf-8')
         #print Title
-        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.quote_plus(Title)
+        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
         Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
         Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
         Mediaitem.ListItem.setLabel(Title)
@@ -171,8 +173,8 @@ def Featured(lang):
     Mode = M_BROWSE_CHANNELS
     Title = __settings__.getLocalizedString(30012)
     Thumb = topics_thumb
-    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
-    Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
+    Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
     Mediaitem.ListItem.setLabel(Title)
     Mediaitem.Isfolder = True
     MediaItems.append(Mediaitem)
@@ -182,8 +184,8 @@ def Featured(lang):
     Mode = M_SEARCH
     Title = __settings__.getLocalizedString(30013)
     Thumb = search_thumb
-    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
-    Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
+    Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
     Mediaitem.ListItem.setLabel(Title)
     Mediaitem.Isfolder = True
     MediaItems.append(Mediaitem)
@@ -226,9 +228,10 @@ def BrowseChannels(lang):
         #print Url
         Title = Title.encode('utf-8')
         #print Title
-        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&lang=" + lang
+        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&lang=" + lang
         Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
-        Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setLabel(Title)
         Mediaitem.Isfolder = True
         MediaItems.append(Mediaitem)
@@ -284,12 +287,13 @@ def Browse(url, lang):
         #print Url
         Title = Title.encode('utf-8')
         #print Title
-        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.quote_plus(Title)
+        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
         Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot,
                                              'Genre': Genre, 'Year': Year,
                                              'Rating': Rating, #'Playcount': Playcount,
                                              'Director': Director, 'Mpaa': Mpaa})
-        Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setProperty('IsPlayable', 'true')
         Mediaitem.ListItem.setLabel(Title)
         MediaItems.append(Mediaitem)
@@ -301,8 +305,9 @@ def Browse(url, lang):
         Mode = M_BROWSE_CHANNEL_CONTENTS
         Title = __settings__.getLocalizedString(30014)
         Thumb = next_thumb
-        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&name=" + urllib.quote_plus(Title)
-        Mediaitem.ListItem.setThumbnailImage(Thumb)
+        Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&name=" + urllib.parse.quote_plus(Title)
+        #Mediaitem.ListItem.setThumbnailImage(Thumb)
+        Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
         Mediaitem.ListItem.setLabel(Title)
         Mediaitem.Isfolder = True
         MediaItems.append(Mediaitem)
@@ -312,8 +317,9 @@ def Browse(url, lang):
     Mode = M_BROWSE_CHANNELS
     Title = __settings__.getLocalizedString(30012)
     Thumb = topics_thumb
-    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
-    Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
+    #Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
     Mediaitem.ListItem.setLabel(Title)
     Mediaitem.Isfolder = True
     MediaItems.append(Mediaitem)
@@ -323,8 +329,9 @@ def Browse(url, lang):
     Mode = M_SEARCH
     Title = __settings__.getLocalizedString(30013)
     Thumb = search_thumb
-    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
-    Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mode) + "&lang=" + lang
+    #Mediaitem.ListItem.setThumbnailImage(Thumb)
+    Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
     Mediaitem.ListItem.setLabel(Title)
     Mediaitem.Isfolder = True
     MediaItems.append(Mediaitem)
@@ -369,7 +376,9 @@ def Play(url):
     Plot = cleanHtml(item['description'])
     #print Url
     Title = Title.encode('utf-8')
-    listitem = ListItem(Title, iconImage=Thumb, thumbnailImage=Thumb)
+    #listitem = ListItem(Title, iconImage=Thumb, thumbnailImage=Thumb)
+    listitem = ListItem(Title)
+    listitem.setArt({'thumb': Thumb, 'icon': Thumb})
     listitem.setInfo('video', { 'Title': Title, 'Plot': Plot,
                                              'Genre': Genre, 'Year': Year,
                                              'Rating': Rating, #'Playcount': Playcount,
@@ -399,11 +408,13 @@ def SetViewMode():
         if __settings__.getSetting('view_mode') == "7": # Media info 2
             xbmc.executebuiltin('Container.SetViewMode(503)')
     except:
-        print "SetViewMode Failed: " + __settings__.getSetting('view_mode')
-        print "Skin: " + xbmc.getSkinDir()
+        xbmc.log('SetViewMode Failed: ' + __settings__.getSetting('view_mode' + str(url)), xbmc.LOGINFO)
+        #print "SetViewMode Failed: " + __settings__.getSetting('view_mode')
+        #print "Skin: " + xbmc.getSkinDir()
 
 # Search documentaries
 def SEARCH(url, lang):
+
         if url is None or url == '':
             keyb = xbmc.Keyboard('', 'Search NFB')
             keyb.doModal()
@@ -413,7 +424,7 @@ def SEARCH(url, lang):
             if search is None or search == '':
                 return
             #search = search.replace(" ", "+")
-            encSrc = urllib.quote(search)
+            encSrc = urllib.parse.quote(search)
             SearchIndex = 0
             Surl = SEARCHURL % (lang, encSrc, SearchIndex)
             url = API_URL % Surl
@@ -462,11 +473,11 @@ mode = None
 titles = None
 lang = None
 try:
-        url = urllib.unquote_plus(params["url"])
+        url = urllib.parse.unquote_plus(params["url"])
 except:
         pass
 try:
-        name = urllib.unquote_plus(params["name"])
+        name = urllib.parse.unquote_plus(params["name"])
 except:
         pass
 try:
@@ -474,7 +485,7 @@ try:
 except:
         pass
 try:
-        titles = urllib.unquote_plus(params["titles"])
+        titles = urllib.parse.unquote_plus(params["titles"])
 except:
         pass
 try:
@@ -490,7 +501,8 @@ xbmc.log( "Mode: " + str(mode) )
 if mode == None:
     BuildMainDirectory()
 elif mode == M_DO_NOTHING:
-    print 'Doing Nothing'
+    #print 'Doing Nothing'
+    xbmc.log('Doing Nothing', xbmc.LOGINFO)
 elif mode == M_SEARCH:
     SEARCH(url, lang)
 elif mode == M_BROWSE_CHANNELS:

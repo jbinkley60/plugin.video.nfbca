@@ -12,10 +12,11 @@
   </extension>
   <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <license>GPL 2.0 or Later</license>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/jbinkley60/plugin.video.nfbca</source>
         <assets>
-        <icon>/resources/icon.png</icon>
-        <fanart>/resources/fanart.jpg</fanart>
+        <icon>resources/icon.png</icon>
+        <fanart>resources/fanart.jpg</fanart>
         </assets>
     <summary lang="en">nfb.ca</summary>
     <description lang="en_GB">Media from nfb.ca website.</description>
