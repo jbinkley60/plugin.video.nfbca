@@ -236,6 +236,9 @@ def BrowseChannels(lang):
         Mediaitem.Isfolder = True
         MediaItems.append(Mediaitem)
     addDir(MediaItems)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
 
     # End of Directory
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -337,6 +340,9 @@ def Browse(url, lang):
     MediaItems.append(Mediaitem)
     addDir(MediaItems)
 
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
     # End of Directory
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
     ## Set Default View Mode. This might break with different skins. But who cares?
