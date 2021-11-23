@@ -1,7 +1,7 @@
-# CBC Sports KodiPlugin Matrix version
-An addon for Kodi (XBMC) for Live Events, Replays, and Highlights from CBC Sports
+# NFB.ca KodiPlugin Matrix version
+Media from nfb.ca website.
 
 Features:
-Get the latest headlines, opinion, and video from CBC Sports.  Watch live events, replays, and highlights.  Region blocked for Canada only.
+Get the latest content from the nfb.ca website.
 
 <img src="resources/icon.png" width="40%">
