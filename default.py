@@ -12,9 +12,9 @@ __settings__ = xbmcaddon.Addon(id='plugin.video.nfbca')
 rootDir = __settings__.getAddonInfo('path')
 if rootDir[-1] == ';':
     rootDir = rootDir[0:-1]
-rootDir = xbmc.translatePath(rootDir)
+rootDir = xbmcvfs.translatePath(rootDir)
 settingsDir = __settings__.getAddonInfo('profile')
-settingsDir = xbmc.translatePath(settingsDir)
+settingsDir = xbmcvfs.translatePath(settingsDir)
 cacheDir = os.path.join(settingsDir, 'cache')
 
 programs_thumb = os.path.join(__settings__.getAddonInfo('path'), 'resources', 'media', 'programs.png')
