@@ -5,7 +5,7 @@ import json
 from xbmcgui import ListItem
 
 # plugin constants
-version = "0.0.2"
+version = "0.0.99b"
 plugin = "nfbca - " + version
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.nfbca')
@@ -234,6 +234,7 @@ def BrowseChannels(lang):
         Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setLabel(Title)
         Mediaitem.Isfolder = True
+        Mediaitem.ListItem.addContextMenuItems([ ('Refresh', 'Container.Refresh'), ('GoUp', 'Action(ParentDir)')])
         MediaItems.append(Mediaitem)
     addDir(MediaItems)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
@@ -299,6 +300,7 @@ def Browse(url, lang):
         Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setProperty('IsPlayable', 'true')
         Mediaitem.ListItem.setLabel(Title)
+        Mediaitem.ListItem.addContextMenuItems([ ('Refresh', 'Container.Refresh'), ('GoUp', 'Action(ParentDir)')])
         MediaItems.append(Mediaitem)
     NextStart = StartIndexInt + ItemsPerPageInt
     if NextStart < ItemCount:
