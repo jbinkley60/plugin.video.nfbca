@@ -24,6 +24,10 @@ msgctxt "#30001"
 msgid "French"
 msgstr ""
 
+msgctxt "#30003"
+msgid "View"
+msgstr ""
+
 msgctxt "#30010"
 msgid "Browse"
 msgstr ""
@@ -58,4 +62,8 @@ msgstr ""
 
 msgctxt "#30323"
 msgid "720p"
+msgstr ""
+
+msgctxt "#30330"
+msgid "Set View Mode For Channels (Confluence only)"
 msgstr ""

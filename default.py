@@ -400,25 +400,27 @@ def Play(url):
 # Set View Mode selected in the setting
 def SetViewMode():
     try:
-        # if (xbmc.getSkinDir() == "skin.confluence"):
-        if __settings__.getSetting('view_mode') == "1": # List
-            xbmc.executebuiltin('Container.SetViewMode(502)')
-        if __settings__.getSetting('view_mode') == "2": # Big List
-            xbmc.executebuiltin('Container.SetViewMode(51)')
-        if __settings__.getSetting('view_mode') == "3": # Thumbnails
-            xbmc.executebuiltin('Container.SetViewMode(500)')
-        if __settings__.getSetting('view_mode') == "4": # Poster Wrap
-            xbmc.executebuiltin('Container.SetViewMode(501)')
-        if __settings__.getSetting('view_mode') == "5": # Fanart
-            xbmc.executebuiltin('Container.SetViewMode(508)')
-        if __settings__.getSetting('view_mode') == "6":  # Media info
-            xbmc.executebuiltin('Container.SetViewMode(504)')
-        if __settings__.getSetting('view_mode') == "7": # Media info 2
-            xbmc.executebuiltin('Container.SetViewMode(503)')
+        current_skin_name = xbmc.getSkinDir()
+        #xbmc.log('Curent Skin Name : ' + str(current_skin_name), xbmc.LOGINFO)
+        if 'confluence' in current_skin_name:
+            if __settings__.getSetting('view_mode') == "1": # List
+                xbmc.executebuiltin('Container.SetViewMode(502)')
+            if __settings__.getSetting('view_mode') == "2": # Big List
+                xbmc.executebuiltin('Container.SetViewMode(51)')
+            if __settings__.getSetting('view_mode') == "3": # Thumbnails
+                xbmc.executebuiltin('Container.SetViewMode(500)')
+            if __settings__.getSetting('view_mode') == "4": # Poster Wrap
+                xbmc.executebuiltin('Container.SetViewMode(501)')
+            if __settings__.getSetting('view_mode') == "5": # Fanart
+                xbmc.executebuiltin('Container.SetViewMode(508)')
+            if __settings__.getSetting('view_mode') == "6":  # Media info
+                xbmc.executebuiltin('Container.SetViewMode(504)')
+            if __settings__.getSetting('view_mode') == "7": # Media info 2
+                xbmc.executebuiltin('Container.SetViewMode(503)')
+        #xbmc.log('SetViewMode : ' + __settings__.getSetting('view_mode'), xbmc.LOGINFO)
     except:
         xbmc.log('SetViewMode Failed: ' + __settings__.getSetting('view_mode' + str(url)), xbmc.LOGINFO)
-        #print "SetViewMode Failed: " + __settings__.getSetting('view_mode')
-        #print "Skin: " + xbmc.getSkinDir()
+
 
 # Search documentaries
 def SEARCH(url, lang):

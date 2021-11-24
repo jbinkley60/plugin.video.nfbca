@@ -1,4 +1,4 @@
-# NFB.ca KodiPlugin Matrix version
+#MFB.ca KodiPlugin Matrix version
 Media from nfb.ca website.
 
 Features:

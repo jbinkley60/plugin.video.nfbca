@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.nfbca"
        name="nfb.ca"
-       version="0.0.990b"
+       version="0.0.990c"
        provider-name="Jbinkley60">
   <requires>
         <import addon="xbmc.python" version="3.0.0"/>
@@ -20,6 +20,6 @@
         </assets>
     <summary lang="en">nfb.ca</summary>
     <description lang="en_GB">Media from nfb.ca website.</description>
-     <platform>all</platform>
+    <platform>all</platform>
   </extension>
 </addon>
