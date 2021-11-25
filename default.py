@@ -57,7 +57,6 @@ class MediaItem:
         
 ## Get URL
 def getURL( url ):
-    #print plugin + ' getURL :: url = ' + url
     cj = http.cookiejar.LWPCookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
     opener.addheaders = [('User-Agent', 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;)')]
@@ -153,13 +152,10 @@ def Featured(lang):
         Slug = item['film_slug']
         MedUrl = MEDIAINFO % Slug
         Url = API_URL % MedUrl
-        #print Url
         Mediaitem.Image = item['img']
         Plot = cleanHtml(item['description'])
         Mediaitem.Mode = M_PLAY
-        #print Url
         Title = Title.encode('utf-8')
-        #print Title
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
         Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
         Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
@@ -202,12 +198,12 @@ def Featured(lang):
 ## BROWSE CHANNELS
 ###########################################################
 def BrowseChannels(lang):   
-    #print 'Browse Channels'
     # set content type so library shows more views and info
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     
     # Get featured homepage contents
     URL = API_URL % CHANNELLIST
+    #xbmc.log('NFBCA M_Browse_Channels URL: ' + str(URL), xbmc.LOGINFO)
     data = getURL(URL)
     #data = load_local_json('channels.json')
     items = json.loads(data)
@@ -221,13 +217,10 @@ def BrowseChannels(lang):
         StartIndex = 0
         ChUrl = CHANNEL % (Slug, StartIndex)
         Url = API_URL % ChUrl
-        #print Url
         Mediaitem.Image = item['thumbnail']
         Plot = cleanHtml(item['description'])
         Mediaitem.Mode = M_BROWSE_CHANNEL_CONTENTS
-        #print Url
         Title = Title.encode('utf-8')
-        #print Title
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&lang=" + lang
         Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
         #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
@@ -237,9 +230,9 @@ def BrowseChannels(lang):
         Mediaitem.ListItem.addContextMenuItems([ ('Refresh', 'Container.Refresh'), ('GoUp', 'Action(ParentDir)')])
         MediaItems.append(Mediaitem)
     addDir(MediaItems)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
+
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
 
     # End of Directory
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -253,12 +246,11 @@ def BrowseChannels(lang):
 ## BROWSE CONTENTS
 ###########################################################   
 def Browse(url, lang):
-    #print 'Browse Contents'
     # set content type so library shows more views and info
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     
     # Get contents for given url
-    #print url
+    #xbmc.log('NFBCA M_Browse_Channels_Content URL: ' + str(url), xbmc.LOGINFO)
     ItemsPerPage, StartIndex = re.compile('qte=(\d+)&at_index=(\d+)&').findall(url)[0]
     ItemsPerPageInt = int( ItemsPerPage )
     StartIndexInt = int( StartIndex )
@@ -281,20 +273,19 @@ def Browse(url, lang):
         Director = item['director']
         Mpaa = item['pg_rating']
         Title = item['title']
+        Aired = item['publish_start']
         Slug = item['slug']
+        Duration = get_seconds(item['time'])
         MedUrl = MEDIAINFO % Slug
         Url = API_URL % MedUrl
-        #print Url
         Mediaitem.Image = item['big_thumbnail']
         Plot = cleanHtml(item['description'])
         Mediaitem.Mode = M_PLAY
-        #print Url
-        Title = Title.encode('utf-8')
-        #print Title
+        Title = Title
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
-        Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot,
-                                             'Genre': Genre, 'Year': Year,
-                                             'Rating': Rating, #'Playcount': Playcount,
+        Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot, 'Duration': Duration,
+                                             'Year': Year, 'Aired': Aired[:10], 'dateadded': Aired,
+                                             'Rating': Rating, "mediatype": 'movie',
                                              'Director': Director, 'Mpaa': Mpaa})
         #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
         Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
@@ -342,9 +333,11 @@ def Browse(url, lang):
     MediaItems.append(Mediaitem)
     addDir(MediaItems)
 
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATEADDED)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DURATION)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_YEAR)
     # End of Directory
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
     ## Set Default View Mode. This might break with different skins. But who cares?
@@ -358,9 +351,7 @@ def Browse(url, lang):
 def Play(url):
     if url == None or url == '':
         return
-    #print 'Getting Media Information to play'
     # Get contents for given url
-    #print url
     #URL = API_URL + HOMESLIDE
     data = getURL(url)
     #data = load_local_json('mediainfo.json')
@@ -379,10 +370,8 @@ def Play(url):
         Url = HQ
     else:
         Url = vanilla
-    #print Url
     Thumb = item['big_thumbnail']
     Plot = cleanHtml(item['description'])
-    #print Url
     Title = Title.encode('utf-8')
     #listitem = ListItem(Title, iconImage=Thumb, thumbnailImage=Thumb)
     listitem = ListItem(Title)
@@ -438,6 +427,7 @@ def SEARCH(url, lang):
             SearchIndex = 0
             Surl = SEARCHURL % (lang, encSrc, SearchIndex)
             url = API_URL % Surl
+            #xbmc.log('NFBCA SEARCH URL: ' + str(url), xbmc.LOGINFO)
         
         Browse(url, lang)
 
@@ -459,6 +449,17 @@ def get_params():
                                 param[splitparams[0]] = splitparams[1]
         return param
 
+def get_seconds(time_text):
+    time_split = time_text.split()
+    time_count = len(time_split)
+    if time_split[1] == 'min' and time_count == 4:
+        secs = (int(time_split[0]) * 60) + int(time_split[2])
+    elif time_split[1] == 'min' and time_count == 2:
+        secs = (int(time_split[0]) * 60)        
+    else:
+        secs = int(time_split[0])
+    return(secs)
+
 def addDir(Listitems):
     if Listitems is None:
         return
@@ -469,7 +470,6 @@ def addDir(Listitems):
     handle = pluginhandle
     xbmcplugin.addDirectoryItems(handle, Items)
     #xbmcplugin.addDirectoryItem(handle=pluginhandle, url, listitem, isFolder)
-    #print 'adding items'
 
 if not os.path.exists(settingsDir):
     os.mkdir(settingsDir)
@@ -503,10 +503,8 @@ try:
 except:
     pass
 
-xbmc.log( "Mode: " + str(mode) )
-#print "URL: " + str(url)
-#print "Name: " + str(name)
-#print "Title: " + str(titles)
+xbmc.log( "Mode: " + str(mode), xbmc.LOGDEBUG)
+
 
 if mode == None:
     BuildMainDirectory()
