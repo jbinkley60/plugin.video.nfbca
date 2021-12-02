@@ -28,9 +28,10 @@ pluginhandle = int(sys.argv[1])
 ## URLs
 ########################################################
 API_URL = 'http://www.nfb.ca/api/v2/json/%sapi_key=0f40a3cd-f7a4-5518-b49f-b6dee4ab8148&platform=mobile_android'
-SEARCHURL = 'search/%s/?search_keywords=%s&qte=24&at_index=%d&'
+SEARCHURL = 'search/%s/?search_keywords=%s&qte=200&at_index=%d&'
 CHANNELLIST = 'channel/all/?'
-CHANNEL = 'channel/content/%s/?qte=24&at_index=%d&'
+#CHANNEL = 'channel/content/%s/?qte=24&at_index=%d&'
+CHANNEL = 'channel/content/%s/?qte=200&at_index=%d&'
 MEDIAINFO = 'film/get_info/%s/?'
 FEATURED = 'pagefeature/all/%s?'
 
@@ -259,6 +260,7 @@ def Browse(url, lang):
     #data = load_local_json('search.json')
     items = json.loads(data)
     ItemCount = int(items['data_length'])
+    #xbmc.log('NFBCA M_Browse_Channels_Content Item count: ' + str(ItemCount), xbmc.LOGINFO)
     if ItemCount < 1:
         return
     itemList = items['data']
