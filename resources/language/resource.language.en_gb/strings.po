@@ -64,6 +64,10 @@ msgctxt "#30323"
 msgid "720p"
 msgstr ""
 
+msgctxt "#30324"
+msgid "NFB.CA Error"
+msgstr ""
+
 msgctxt "#30330"
 msgid "Set View Mode For Channels (Confluence only)"
 msgstr ""

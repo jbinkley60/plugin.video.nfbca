@@ -358,6 +358,11 @@ def Play(url):
     data = getURL(url)
     #data = load_local_json('mediainfo.json')
     items = json.loads(data)
+    #xbmc.log('ndbca JSON: ' + str(items), xbmc.LOGINFO)
+    if len(data) < 133:
+        #xbmc.log("ndbca can't play item " + str(len(data)), xbmc.LOGINFO)
+        xbmcgui.Dialog().ok(__settings__.getLocalizedString(30324), "Unable to play selected video")
+        return        
     item = items['data'].get('film', '')
     Genre = item['genres']
     Year = item['year']
