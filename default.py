@@ -5,7 +5,7 @@ import json
 from xbmcgui import ListItem
 
 # plugin constants
-version = "0.0.99b"
+version = "0.0.991w"
 plugin = "nfbca - " + version
 
 __settings__ = xbmcaddon.Addon(id='plugin.video.nfbca')
@@ -27,7 +27,8 @@ pluginhandle = int(sys.argv[1])
 ########################################################
 ## URLs
 ########################################################
-API_URL = 'http://www.nfb.ca/api/v2/json/%sapi_key=0f40a3cd-f7a4-5518-b49f-b6dee4ab8148&platform=mobile_android'
+#API_URL = 'http://www.nfb.ca/api/v2/json/%sapi_key=0f40a3cd-f7a4-5518-b49f-b6dee4ab8148&platform=mobile_android'
+API_URL = 'https://www.nfb.ca/api/v2/json/%sapi_key=0f40a3cd-f7a4-5518-b49f-b6dee4ab8148'
 SEARCHURL = 'search/%s/?search_keywords=%s&qte=200&at_index=%d&'
 CHANNELLIST = 'channel/all/?'
 #CHANNEL = 'channel/content/%s/?qte=24&at_index=%d&'
@@ -108,6 +109,16 @@ def cleanHtml( dirty ):
     clean = re.sub('</strong>', '', clean)
     return clean
 
+def get_installedversion():
+    # retrieve current installed version
+    json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Application.GetProperties", "params": {"properties": ["version", "name"]}, "id": 1 }')
+    json_query = json.loads(json_query)
+    version_installed = []
+    if 'result' in json_query and 'version' in json_query['result']:
+        version_installed  = json_query['result']['version']['major']
+    return version_installed
+
+
 ########################################################
 ## Mode = None
 ## Build the main directory
@@ -118,6 +129,7 @@ def BuildMainDirectory():
         (__settings__.getLocalizedString(30000), topics_thumb, str(M_FEATURED), 'en'),
         (__settings__.getLocalizedString(30001), topics_thumb, str(M_FEATURED), 'fr')
         ]
+    kversion = get_installedversion()  
     for name, thumbnailImage, mode, lang in main:
         Mediaitem = MediaItem()
         Url = ''
@@ -141,6 +153,7 @@ def Featured(lang):
     
     # Get featured homepage contents
     URL = API_URL % (FEATURED % lang)
+    xbmc.log('NFBCA Features Lang URL URL: ' + str(URL), xbmc.LOGDEBUG)
     data = getURL(URL)
     #data = load_local_json('featured.json')
     items = json.loads(data)
@@ -158,12 +171,21 @@ def Featured(lang):
         Mediaitem.Mode = M_PLAY
         Title = Title.encode('utf-8')
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
-        Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
-        Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        if int(kversion) == 19: 
+            Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
+        else:
+            vinfo = Mediaitem.ListItem.getVideoInfoTag()
+            vinfo.setTitle(Title)
+            vinfo.setPlot(Plot)
+            vinfo.setMediaType('movie')
+       
+        #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
+        Thumb = Mediaitem.Image
+        Mediaitem.ListItem.setArt({'thumb': Thumb, 'icon': Thumb})
         Mediaitem.ListItem.setLabel(Title)
         Mediaitem.ListItem.setProperty('IsPlayable', 'true')
         #Mediaitem.Isfolder = True
-        MediaItems.append(Mediaitem)
+        MediaItems.append(Mediaitem) 
     # One Mediaitem for Channels
     Mediaitem = MediaItem()
     Url = ''
@@ -223,7 +245,14 @@ def BrowseChannels(lang):
         Mediaitem.Mode = M_BROWSE_CHANNEL_CONTENTS
         Title = Title.encode('utf-8')
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&lang=" + lang
-        Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
+        if int(kversion) == 19: 
+          Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot})
+        else:
+            binfo = Mediaitem.ListItem.getVideoInfoTag()
+            binfo.setTitle(Title)
+            binfo.setPlot(Plot)
+            binfo.setMediaType('movie')
+
         #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
         Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setLabel(Title)
@@ -285,10 +314,24 @@ def Browse(url, lang):
         Mediaitem.Mode = M_PLAY
         Title = Title
         Mediaitem.Url = sys.argv[0] + "?url=" + urllib.parse.quote_plus(Url) + "&mode=" + str(Mediaitem.Mode) + "&name=" + urllib.parse.quote_plus(Title)
-        Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot, 'Duration': Duration,
-                                             'Year': Year, 'Aired': Aired[:10], 'dateadded': Aired,
-                                             'Rating': Rating, "mediatype": 'movie',
-                                             'Director': Director, 'Mpaa': Mpaa})
+        if int(kversion) == 19: 
+            Mediaitem.ListItem.setInfo('video', { 'Title': Title, 'Plot': Plot, 'Duration': Duration,
+                                                 'Year': Year, 'Aired': Aired[:10], 'dateadded': Aired,
+                                                 'Rating': Rating, "mediatype": 'movie',
+                                                 'Director': Director, 'Mpaa': Mpaa})
+        else:
+            cinfo = Mediaitem.ListItem.getVideoInfoTag()
+            cinfo.setTitle(Title)
+            cinfo.setPlot(Plot)
+            cinfo.setMediaType('movie')
+            cinfo.setDuration(Duration)
+            cinfo.setYear(Year)
+            cinfo.setFirstAired(Aired[:10])
+            cinfo.setDateAdded(Aired)
+            cinfo.setRating(Rating)
+            if Director is not None: cinfo.setDirectors(Director.split(','))
+            cinfo.setMpaa(Mpaa)  
+
         #Mediaitem.ListItem.setThumbnailImage(Mediaitem.Image)
         Mediaitem.ListItem.setArt({'thumb': Mediaitem.Image, 'icon': Mediaitem.Image})
         Mediaitem.ListItem.setProperty('IsPlayable', 'true')
@@ -359,8 +402,8 @@ def Play(url):
     #data = load_local_json('mediainfo.json')
     items = json.loads(data)
     #xbmc.log('ndbca JSON: ' + str(items), xbmc.LOGINFO)
-    if len(data) < 133:
-        #xbmc.log("ndbca can't play item " + str(len(data)), xbmc.LOGINFO)
+    if 'failed' in str(items['status']):
+        #xbmc.log("ndbca can't play item " + str(items['status']), xbmc.LOGINFO)
         xbmcgui.Dialog().ok(__settings__.getLocalizedString(30324), "Unable to play selected video")
         return        
     item = items['data'].get('film', '')
@@ -383,10 +426,22 @@ def Play(url):
     #listitem = ListItem(Title, iconImage=Thumb, thumbnailImage=Thumb)
     listitem = ListItem(Title)
     listitem.setArt({'thumb': Thumb, 'icon': Thumb})
-    listitem.setInfo('video', { 'Title': Title, 'Plot': Plot,
+    if int(kversion) == 19: 
+        listitem.setInfo('video', { 'Title': Title, 'Plot': Plot,
                                              'Genre': Genre, 'Year': Year,
                                              'Rating': Rating, #'Playcount': Playcount,
                                              'Director': Director, 'Mpaa': Mpaa})
+    else:
+        pinfo = listitem.getVideoInfoTag()
+        pinfo.setTitle(Title)
+        pinfo.setPlot(Plot)
+        pinfo.setMediaType('movie')
+        pinfo.setYear(Year)
+        pinfo.setRating(Rating)
+        if Director is not None: pinfo.setDirectors(Director.split(','))
+        pinfo.setMpaa(Mpaa)
+        if Genre is not None: pinfo.setGenres(Genre.split(','))   
+
     listitem.setPath(Url)
     #vid = xbmcgui.ListItem(path=url)
     #xbmc.Player(xbmc.PLAYER_CORE_DVDPLAYER).play(url, vid)
@@ -512,6 +567,7 @@ except:
 
 xbmc.log( "Mode: " + str(mode), xbmc.LOGDEBUG)
 
+kversion = get_installedversion()                   #  Get Kodi version
 
 if mode == None:
     BuildMainDirectory()

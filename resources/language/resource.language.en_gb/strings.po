@@ -71,3 +71,7 @@ msgstr ""
 msgctxt "#30330"
 msgid "Set View Mode For Channels (Confluence only)"
 msgstr ""
+
+msgctxt "#30331"
+msgid "Alternate URL Detection Mode"
+msgstr ""
