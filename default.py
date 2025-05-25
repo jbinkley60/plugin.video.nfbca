@@ -226,10 +226,11 @@ def BrowseChannels(lang):
     
     # Get featured homepage contents
     URL = API_URL % CHANNELLIST
-    #xbmc.log('NFBCA M_Browse_Channels URL: ' + str(URL), xbmc.LOGINFO)
+    xbmc.log('NFBCA M_Browse_Channels URL: ' + str(URL), xbmc.LOGDEBUG)
     data = getURL(URL)
     #data = load_local_json('channels.json')
     items = json.loads(data)
+    #xbmc.log('NFBCA M_Browse_Channels URL: ' + str(items), xbmc.LOGINFO)
     itemList = items['data']
     itemList = [item for item in itemList if item.get('language', '') == lang]
     MediaItems = []
@@ -287,11 +288,18 @@ def Browse(url, lang):
     #URL = API_URL + HOMESLIDE
     data = getURL(url)
     #data = load_local_json('search.json')
+    #xbmc.log('NFBCA M_Browse_Channels_Content json data: ' + str(data), xbmc.LOGINFO)
     items = json.loads(data)
+    status = items['status']
+    #xbmc.log('NFBCA M_Browse_Channels_Content status response: ' + status, xbmc.LOGINFO)
+    if status.lower() == 'failed':                            #  Did not return any video listings
+        return
     ItemCount = int(items['data_length'])
     #xbmc.log('NFBCA M_Browse_Channels_Content Item count: ' + str(ItemCount), xbmc.LOGINFO)
     if ItemCount < 1:
         return
+    ItemCount = int(items['data_length'])
+    #xbmc.log('NFBCA M_Browse_Channels_Content Item count: ' + str(ItemCount), xbmc.LOGINFO)
     itemList = items['data']
     itemList = [item for item in itemList]
     MediaItems = []
@@ -489,7 +497,7 @@ def SEARCH(url, lang):
             SearchIndex = 0
             Surl = SEARCHURL % (lang, encSrc, SearchIndex)
             url = API_URL % Surl
-            #xbmc.log('NFBCA SEARCH URL: ' + str(url), xbmc.LOGINFO)
+            xbmc.log('NFBCA SEARCH URL: ' + str(url), xbmc.LOGINFO)
         
         Browse(url, lang)
 
