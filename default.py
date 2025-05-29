@@ -293,6 +293,7 @@ def Browse(url, lang):
     status = items['status']
     #xbmc.log('NFBCA M_Browse_Channels_Content status response: ' + status, xbmc.LOGINFO)
     if status.lower() == 'failed':                            #  Did not return any video listings
+        xbmcgui.Dialog().notification("NFB CA No Response",  "Failed response from nfbca website") 
         return
     ItemCount = int(items['data_length'])
     #xbmc.log('NFBCA M_Browse_Channels_Content Item count: ' + str(ItemCount), xbmc.LOGINFO)

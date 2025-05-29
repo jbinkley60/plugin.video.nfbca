@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.nfbca"
        name="nfb.ca"
-       version="0.0.990y"
+       version="0.0.990z"
        provider-name="Jbinkley60">
   <requires>
         <import addon="xbmc.python" version="3.0.0"/>
